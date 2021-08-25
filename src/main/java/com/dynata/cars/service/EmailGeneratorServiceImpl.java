@@ -3,7 +3,6 @@ package com.dynata.cars.service;
 import com.dynata.cars.controllers.dto.response.GeneratedEmailsResponse;
 import com.dynata.cars.dao.CarEntity;
 import com.dynata.cars.dao.PersonEntity;
-import com.dynata.cars.dao.repository.PersonRepository;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,18 +15,18 @@ import java.util.Set;
 @Service
 public class EmailGeneratorServiceImpl implements EmailGeneratorService {
 
-    private PersonRepository personRepository;
+    private PersonService personService;
 
 
     @Autowired
-    public void setPersonRepository(PersonRepository personRepository) {
-        this.personRepository = personRepository;
+    public void setPersonRepository(PersonService personService) {
+        this.personService = personService;
     }
 
     @Override
     public GeneratedEmailsResponse generateEmails() {
         GeneratedEmailsResponse generatedEmailsResponse = new GeneratedEmailsResponse();
-        Set<PersonEntity> personRepositoryList = getPersonEntities();
+        Set<PersonEntity> personRepositoryList = personService.getPersonEntitiesForEmailGeneration();
 
         for (PersonEntity personEntity : personRepositoryList) {
             StringBuilder builder = new StringBuilder();
@@ -62,13 +61,6 @@ public class EmailGeneratorServiceImpl implements EmailGeneratorService {
     private boolean isaCorrectCar(CarEntity carEntity) {
         return !carEntity.getIsSent() && carEntity.getCalculatedValue() > 0;
     }
-
-    @Cacheable("personEntities")
-    public Set<PersonEntity> getPersonEntities() {
-        Set<PersonEntity> personRepositorySet = personRepository.findALLByCars_CalculatedValueGreaterThanAndCars_isSent();
-        return personRepositorySet;
-    }
-
 
     private Map<String, String> getPersonValuesMap(PersonEntity personEntity) {
         Map<String, String> valuesMap = new HashMap<>();

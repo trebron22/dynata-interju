@@ -8,5 +8,4 @@ import java.util.Set;
 public interface EmailGeneratorService {
 
     GeneratedEmailsResponse generateEmails();
-    Set<PersonEntity> getPersonEntities();
 }

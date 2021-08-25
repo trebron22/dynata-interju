@@ -6,6 +6,7 @@ import java.util.*;
 
 @Getter
 @Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
